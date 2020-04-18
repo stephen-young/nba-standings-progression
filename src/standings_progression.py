@@ -26,7 +26,7 @@ def get_standings_data_from_spreadsheet(filename):
 
   return standings_data 
 
-def process_spreadsheet_data(standings_data):
+def process_standings_data(standings_data):
 
   end_date = standings_data.index[-1]
   team_list = list(standings_data.loc[end_date,'team'])
