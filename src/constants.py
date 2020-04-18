@@ -1,95 +1,6 @@
 # from enum import Enum, IntEnum, auto
 from numpy import linspace
 
-"""
-# Originally thought I would use enums to manage teams but just kept the strings from spreadsheet data processing
-class Conference(Enum):
-    East = 'East'
-    West = 'West'
-
-class Team(Enum):
-    ATLANTA_HAWKS = auto()
-    BOSTON_CELTICS = auto()
-    BROOKLYN_NETS = auto()
-    CHARLOTTE_HORNETS = auto()
-    CHICAGO_BULLS = auto()
-    CLEVELAND_CAVALIERS = auto()
-    DALLAS_MAVERICKS = auto()
-    DENVER_NUGGETS = auto()
-    DETROIT_PISTONS = auto()
-    GOLDEN_STATE_WARRIORS = auto()
-    HOUSTON_ROCKETS = auto()
-    INDIANA_PACERS = auto()
-    LOS_ANGELES_CLIPPERS = auto()
-    LOS_ANGELES_LAKERS = auto()
-    MEMPHIS_GRIZZLIES = auto()
-    MIAMI_HEAT = auto()
-    MILWAUKEE_BUCKS = auto()
-    MINNESOTA_TIMBERWOLVES = auto()
-    NEW_ORLEANS_PELICANS = auto()
-    NEW_YORK_KNICKS = auto()
-    OKLAHOMA_CITY_THUNDER = auto()
-    ORLANDO_MAGIC = auto()
-    PHILADELPHIA_76ERS = auto()
-    PHOENIX_SUNS = auto()
-    PORTLAND_TRAIL_BLAZERS = auto()
-    SACRAMENTO_KINGS = auto()
-    SAN_ANTONIO_SPURS = auto()
-    TORONTO_RAPTORS = auto()
-    UTAH_JAZZ = auto()
-    WASHINGTON_WIZARDS = auto()
-
-    # HISTORICAL TEAMS
-    CHARLOTTE_BOBCATS = auto()
-    NEW_JERSEY_NETS = auto()
-    NEW_ORLEANS_HORNETS = auto()
-    NEW_ORLEANS_OKLAHOMA_CITY_HORNETS = auto()
-    SEATTLE_SUPERSONICS = auto()
-    VANCOUVER_GRIZZLIES = auto()
-
-TEAM_ABBREVIATION_TO_TEAM = {
-    'ATL': Team.ATLANTA_HAWKS,
-    'BOS': Team.BOSTON_CELTICS,
-    'BRK': Team.BROOKLYN_NETS,
-    'CHI': Team.CHICAGO_BULLS,
-    'CHO': Team.CHARLOTTE_HORNETS,
-    'CLE': Team.CLEVELAND_CAVALIERS,
-    'DAL': Team.DALLAS_MAVERICKS,
-    'DEN': Team.DENVER_NUGGETS,
-    'DET': Team.DETROIT_PISTONS,
-    'GSW': Team.GOLDEN_STATE_WARRIORS,
-    'HOU': Team.HOUSTON_ROCKETS,
-    'IND': Team.INDIANA_PACERS,
-    'LAC': Team.LOS_ANGELES_CLIPPERS,
-    'LAL': Team.LOS_ANGELES_LAKERS,
-    'MEM': Team.MEMPHIS_GRIZZLIES,
-    'MIA': Team.MIAMI_HEAT,
-    'MIL': Team.MILWAUKEE_BUCKS,
-    'MIN': Team.MINNESOTA_TIMBERWOLVES,
-    'NOP': Team.NEW_ORLEANS_PELICANS,
-    'NYK': Team.NEW_YORK_KNICKS,
-    'OKC': Team.OKLAHOMA_CITY_THUNDER,
-    'ORL': Team.ORLANDO_MAGIC,
-    'PHI': Team.PHILADELPHIA_76ERS,
-    'PHO': Team.PHOENIX_SUNS,
-    'POR': Team.PORTLAND_TRAIL_BLAZERS,
-    'SAC': Team.SACRAMENTO_KINGS,
-    'SAS': Team.SAN_ANTONIO_SPURS,
-    'TOR': Team.TORONTO_RAPTORS,
-    'UTA': Team.UTAH_JAZZ,
-    'WAS': Team.WASHINGTON_WIZARDS,
-
-    # HISTORICAL TEAMS
-    'CHA': Team.CHARLOTTE_BOBCATS,
-    'CHH': Team.CHARLOTTE_HORNETS,
-    'NJN': Team.NEW_JERSEY_NETS,
-    'NOH': Team.NEW_ORLEANS_HORNETS,
-    'NOK': Team.NEW_ORLEANS_OKLAHOMA_CITY_HORNETS,
-    'SEA': Team.SEATTLE_SUPERSONICS,
-    'VAN': Team.VANCOUVER_GRIZZLIES
-}
-"""
-
 #Team colours selected from https://teamcolorcodes.com/nba-team-color-codes/
 TEAM_COLOURS = {
     'ATL': {'line':'#E03A3E', 'marker':'#C1D32F', 'edge':'#000000'},
@@ -104,10 +15,10 @@ TEAM_COLOURS = {
     'GSW': {'line':'#FFC72C', 'marker':'#1D428A', 'edge':'#1D428A'},
     'HOU': {'line':'#CE1141', 'marker':'#000000', 'edge':'#000000'},
     'IND': {'line':'#002D62', 'marker':'#FDBB30', 'edge':'#000000'},
-    'LAC': {'line':'#C8102E', 'marker':'#FFFFFF', 'edge':'#000000'},
+    'LAC': {'line':'#C8102E', 'marker':'#1D428A', 'edge':'#1D428A'},
     'LAL': {'line':'#552583', 'marker':'#FDB927', 'edge':'#000000'},
-    'MEM': {'line':'#5D76A9', 'marker':'#12173F', 'edge':'#000000'},
-    'MIA': {'line':'#98002E', 'marker':'#F9A01B', 'edge':'#000000'},
+    'MEM': {'line':'#5D76A9', 'marker':'#F5B112', 'edge':'#12173F'},
+    'MIA': {'line':'#F9A01B', 'marker':'#98002E', 'edge':'#000000'},
     'MIL': {'line':'#00471B', 'marker':'#EEE1C6', 'edge':'#000000'},
     'MIN': {'line':'#236192', 'marker':'#0C2340', 'edge':'#000000'},
     'NOP': {'line':'#C8102E', 'marker':'#0C2340', 'edge':'#000000'},
@@ -120,7 +31,7 @@ TEAM_COLOURS = {
     'SAC': {'line':'#5A2D81', 'marker':'#63727A', 'edge':'#000000'},
     'SAS': {'line':'#000000', 'marker':'#C4CED4', 'edge':'#000000'},
     'TOR': {'line':'#CE1141', 'marker':'#FFFFFF', 'edge':'#000000'},
-    'UTA': {'line':'#00471B', 'marker':'#F9A01B', 'edge':'#002B5C'},
+    'UTA': {'line':'#3E2680', 'marker':'#6CAEDF', 'edge':'#00275D'},
     'WAS': {'line':'#E31837', 'marker':'#002B5C', 'edge':'#000000'},
     'CHA': {'line':'#002B5C', 'marker':'#F58426', 'edge':'#000000'},
     'CHH': {'line':'#00778B', 'marker':'#280071', 'edge':'#000000'},
@@ -143,8 +54,8 @@ PLOT = {
     },
     'Line':{
         'Marker': {
-            'Symbol': 'o',
-            'Size': 24.0,
+            'Symbol': '.',
+            'Size': 7.5,
             'EdgeWidth': 1.0,
         },
         'Width': 2.0
