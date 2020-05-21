@@ -53,16 +53,15 @@ PLOT = {
         'YTick': linspace(0,1,11),
     },
     'Line':{
-        'Marker': {
-            'Symbol': '.',
-            'Size': 7.5,
-            'EdgeWidth': 1.0,
-        },
         'Width': 2.0
-        
+    },
+    'Marker': {
+        'Symbol': '.',
+        'Size': 7.5,
+        'EdgeWidth': 0.25,
     },
     'Legend': {
         'NumCol': 2
     }
-    
+
 }

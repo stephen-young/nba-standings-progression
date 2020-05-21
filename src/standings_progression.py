@@ -24,7 +24,7 @@ def get_standings_data_from_spreadsheet(filename):
   standings_data['rank'] = standings_data.index.levels[1][standings_data.index.codes[1]]
   standings_data.index = standings_data.index.droplevel(1)
 
-  return standings_data 
+  return standings_data
 
 def process_standings_data(standings_data):
 
@@ -35,7 +35,7 @@ def process_standings_data(standings_data):
     for team in team_list]
 
   win_frac_df = pandas.concat(win_frac_data,axis=1,keys=team_list)
-  
+
   return win_frac_df
 
 def plot_standings_progression(data):
@@ -78,11 +78,11 @@ def plot_standings_progression(data):
 
     line.set_label(team)
     line.set_color(colours['line'])
-    line.set_marker('.')
+    line.set_marker(PLOT['Marker']['Symbol'])
     line.set_markerfacecolor(colours['marker'])
     line.set_markeredgecolor(colours['edge'])
-    line.set_markeredgewidth(0.25)
-    line.set_markersize(7.5)
+    line.set_markeredgewidth(PLOT['Marker']['EdgeWidth'])
+    line.set_markersize(PLOT['Marker']['Size'])
 
     # Set the line style of non-playoff teams to dotted
     if i >= 8:
