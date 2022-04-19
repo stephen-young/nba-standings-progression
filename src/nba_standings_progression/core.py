@@ -1,21 +1,97 @@
 import pandas
+import numpy as np
 import matplotlib.pyplot as plt
-from constants import TEAM_COLOURS, PLOT
+from enum import Enum, auto
+from nba_standings_progression.constants import TEAM_COLOURS, PLOT, STANDINGS_PATTERN, GROUP_URL
 pandas.plotting.register_matplotlib_converters()
 
-def get_standings_data_from_spreadsheet(filename):
+# TODO Merge constants with this(?)
+# TODO Rename module to standings_progression or something
+# TODO Make generate_plots.py script a function in this module
 
-  col_names = ['1st','2nd', '3rd', '4th', '5th','6th', '7th', '8th','9th', \
-    '10th', '11th', '12th', '13th', '14th', '15th']
+class Group(Enum):
+    EAST = auto()
+    WEST = auto()
+    ATLANTIC = auto()
+    CENTRAL = auto()
+    SOUTHEAST = auto()
+    NORTHWEST = auto()
+    PACIFIC = auto()
+    SOUTHWEST = auto()
+
+def standings_progression(season_year: int, group:Group):
+
+  # Group component of basketball-reference's standings by date url
+  GROUP_URL = {
+      Group.EAST:      'eastern_conference',
+      Group.WEST:      'western_conference',
+      Group.ATLANTIC:  'atlantic_division',
+      Group.CENTRAL:   'central_division',
+      Group.SOUTHEAST: 'southeast_division',
+      Group.NORTHWEST: 'northwest_division',
+      Group.PACIFIC:   'pacific_division',
+      Group.SOUTHWEST: 'southwest_division',
+  }
+
+  url = f"www.basketball-reference.com/leagues/NBA_{season_year}_standings_by_date_{GROUP_URL[group]}"
+
+  standings_data = get_standings_data_from_web(url)
+  standings_data = process_standings_data(standings_data)
+  progression_plot = plot_standings_progression(standings_data)
+
+  return progression_plot
+
+def get_standings_data_from_web(url):
+  """Load standings by date data from Basketball Reference into a DataFrame from webpage
+  :param url: The year of the end of the NBA regular season
+  :type url: str
+  :return: Standings by date data
+  :rtype: pandas.DataFrame
+  .. seealso:: pandas.read_html
+  """
+
+  data_frames = pandas.read_html(url, index_col=0, parse_dates=True)
+  standings_data = data_frames[0]
+  standings_data.columns = standings_data.columns.droplevel(0)
+  standings_data = standings_data[standings_data.index.notna()]
+
+  start_date = standings_data.index[0]
+  end_date = standings_data.index[-1]
+  months = pandas.date_range(start_date, end_date, freq='MS')
+  months = months.strftime('%B')
+
+  standings_data = standings_data[np.logical_not(standings_data.index.isin(months))]
+  standings_data.columns = range(1, standings_data.shape[1]+1)
+
+  return standings_data
+
+def get_standings_data_from_spreadsheet(filename):
+  """Load standings by date data from Basketball Reference into a DataFrame
+  :param filename: Path to the spreadsheet file
+  :type filename: str, path object or file-like object
+  :return: Standings by date data
+  :rtype: pandas.DataFrame
+  .. seealso:: pandas.read_excel
+  """
 
   standings_data = pandas.read_excel(filename, header=None, index_col=0, \
-    parse_dates=True, names=col_names)
+    parse_dates=True)
+  standings_data.index.name = None
+
+  return standings_data
+
+def process_standings_data(standings_data):
+  """Process standings data to get win fraction of teams in group by date
+  :param standings_data: Table with the date and record of teams in grouping
+  :type standings_data: pandas.DataFrame
+
+  :return: Win fraction by date for each team in group
+  :rtype: pandas.DataFrame
+  """
 
   standings_data = standings_data.stack()
 
-  standings_pattern = r'(?P<team>[A-Z]{3})\s\((?P<win>\d+)\-(?P<loss>\d+)\)'
-
-  standings_data = standings_data.str.extract(standings_pattern)
+  standings_data = standings_data.str.extract(STANDINGS_PATTERN)
 
   standings_data['win'] = pandas.to_numeric(standings_data['win'])
   standings_data['loss'] = pandas.to_numeric(standings_data['loss'])
@@ -23,10 +99,6 @@ def get_standings_data_from_spreadsheet(filename):
   standings_data['PCT'] = standings_data['win'] / standings_data['GP']
   standings_data['rank'] = standings_data.index.levels[1][standings_data.index.codes[1]]
   standings_data.index = standings_data.index.droplevel(1)
-
-  return standings_data
-
-def process_standings_data(standings_data):
 
   end_date = standings_data.index[-1]
   team_list = list(standings_data.loc[end_date,'team'])
@@ -39,15 +111,20 @@ def process_standings_data(standings_data):
   return win_frac_df
 
 def plot_standings_progression(data):
+  """Produce a plot of the standings progression
 
-  # // put magic numbers into a dict in constants.py
+  :param data: Win fraction by date data for each team in group
+  :type data: pandas.DataFrame
+
+  :return: Figure of standings progression plot
+  :rtype: matplotlib.figure.Figure
+  """
 
   team_list = list(data.columns)
   start_date = data.index[0]
   end_date = data.index[-1]
   dates = data.index.to_pydatetime()
 
-  # // make x-ticks 1 month offsets from start date rather than the start of each month
   date_ticks = pandas.date_range(start_date, end_date, freq=pandas.DateOffset(months=1))
 
   fig, axes = plt.subplots(figsize=PLOT['Figure']['Size'])
