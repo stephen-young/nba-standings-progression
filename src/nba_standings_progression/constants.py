@@ -1,5 +1,5 @@
-# from enum import Enum, IntEnum, auto
-from numpy import linspace
+
+STANDINGS_PATTERN = r'(?P<team>[A-Z]{3})\s\((?P<win>\d+)\-(?P<loss>\d+)\)'
 
 #Team colours selected from https://teamcolorcodes.com/nba-team-color-codes/
 TEAM_COLOURS = {
@@ -50,7 +50,7 @@ PLOT = {
     'Axes': {
         'YMin': 0.0,
         'YMax': 1.0,
-        'YTick': linspace(0,1,11),
+        'YTick': [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
     },
     'Line':{
         'Width': 2.0
