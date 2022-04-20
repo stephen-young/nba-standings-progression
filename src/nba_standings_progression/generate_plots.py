@@ -1,5 +1,5 @@
 from pathlib import Path
-import standings_progression as sp
+import nba_standings_progression as sp
 
 
 DATA_DIR = Path('./standings_data')
