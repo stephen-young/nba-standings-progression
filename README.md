@@ -1,6 +1,6 @@
 # NBA Standings Progression
 
-Generate plots of the standings progression in the Eastern and Western conferences of the NBA.
+Generate plots of the standings progression in the conferences and divisions in the NBA.
 
 ## How to use
 
