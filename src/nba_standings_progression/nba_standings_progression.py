@@ -1,12 +1,9 @@
-from tkinter import W
 import pandas
 import numpy as np
 import matplotlib.pyplot as plt
 from enum import Enum, auto
 from pathlib import Path
 pandas.plotting.register_matplotlib_converters()
-
-# TODO Rename module to standings_progression or something
 
 class Group(Enum):
     EAST = auto()
