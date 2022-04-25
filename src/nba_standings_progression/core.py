@@ -1,11 +1,12 @@
+from tkinter import W
 import pandas
 import numpy as np
 import matplotlib.pyplot as plt
 from enum import Enum, auto
+from pathlib import Path
 pandas.plotting.register_matplotlib_converters()
 
 # TODO Rename module to standings_progression or something
-# TODO Make generate_plots.py script a function in this module
 
 class Group(Enum):
     EAST = auto()
@@ -31,13 +32,34 @@ def standings_progression(season_year: int, group:Group):
       Group.SOUTHWEST: 'southwest_division',
   }
 
-  url = f"www.basketball-reference.com/leagues/NBA_{season_year}_standings_by_date_{GROUP_URL[group]}"
+  url = f"www.basketball-reference.com/leagues/NBA_{season_year}_standings_by_date_{GROUP_URL[group]}.html"
 
   standings_data = get_standings_data_from_web(url)
   standings_data = process_standings_data(standings_data)
   progression_plot = plot_standings_progression(standings_data)
 
   return progression_plot
+
+def generate_standings_progression_plots(data_dir: Path, output_dir: Path) -> None:
+
+  DATA_FILE_PATTERN = '*.xlsx'
+  IMG_FORMAT = '.png'
+
+  data_files = sorted(data_dir.glob(DATA_FILE_PATTERN))
+
+  for file in data_files:
+
+    try:
+      ws_data = get_standings_data_from_spreadsheet(str(file))
+    except:
+      print("Something went wrong with " + str(file))
+      continue
+
+    win_frac_data = process_standings_data(ws_data)
+    fig = plot_standings_progression(win_frac_data)
+    out_file = output_dir / file.with_suffix(IMG_FORMAT).name
+    fig.savefig(str(out_file), format=IMG_FORMAT[1:])
+
 
 def get_standings_data_from_web(url):
   """Load standings by date data from Basketball Reference into a DataFrame from webpage
