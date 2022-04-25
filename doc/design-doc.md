@@ -2,7 +2,7 @@
 
 Stephen Young
 
-Last updated: 5 June 2021
+Last updated: 16 April 2022
 
 ## Overview
 
@@ -31,12 +31,29 @@ grouping and return a plot the standings progression of that conference for
 that year. An option that the module could have is the ability to exclude
 teams that miss the playoffs.
 
-The only team groupings available will be by conference. Options for plotting
-the standings progression of the divisions might be added later.
+The available groupings will be:
+
+- Eastern Conference
+- Western Conference
+- Atlantic Division
+- Central Division
+- Southeast Division
+- Northwest Division
+- Pacific Division
+- Southwest Division
+
 Thus far, the standings progression plots have used team colours for the
-markers and lines to differentiate them. It will be challenging to make the the
-colour configuration for each team visually distinct enough to differentiate
-between all teams when the entire league is in the plot. For example, the
-Chicago Bulls, Houston Rockets, Miami Heat, Toronto Raptors have red, white
-and/or black as their dominant colours. For this reason, the largest grouping
-of the standings progression plot will be a conference.
+markers and lines to differentiate them. It will be challenging to make the
+the colour configuration for each team visually distinct enough to
+differentiate between all teams when the entire league is in the plot. For
+example, the Chicago Bulls, Houston Rockets, Miami Heat, Toronto Raptors have
+red, white and/or black in their colours. For this reason, the largest
+grouping of the standings progression plot will be a conference.
+
+While I understand that scrapping the data is potentially problematic for the
+Basketball Reference servers, I would be interested in a formal API approach.
+I am aware of packages like [nba-api](https://pypi.org/project/nba-api/) that
+access the NBA's offical stats API but with a cursoury glance of the
+doucmentation I was not able to see a way to retrieve the standings progression
+data easily. I have not dug into the documentation to see if I could pull the
+standings progression data.
