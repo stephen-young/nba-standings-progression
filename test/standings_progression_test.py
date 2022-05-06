@@ -9,5 +9,12 @@ def standings_data():
     data = sp.get_standings_data_from_web(URL)
     return data
 
+@pytest.fixture(scope="session")
+def processed_data(standings_data):
+    return sp.process_standings_data(standings_data)
+
 def test_standings_data_from_web_return_type(standings_data):
     assert type(standings_data) is pd.DataFrame
+
+def test_standings_data_processing_return_type(processed_data):
+    assert type(processed_data) is pd.DataFrame
