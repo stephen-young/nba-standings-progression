@@ -60,11 +60,15 @@ def generate_standings_progression_plots(data_dir: Path, output_dir: Path) -> No
 
 def get_standings_data_from_web(url):
   """Load standings by date data from Basketball Reference into a DataFrame from webpage
-  :param url: The year of the end of the NBA regular season
-  :type url: str
-  :return: Standings by date data
-  :rtype: pandas.DataFrame
-  .. seealso:: pandas.read_html
+
+  Args:
+    url (str): The year of the end of the NBA regular season
+
+  Returns:
+    DataFrame: Standings by date data
+
+  Raises:
+    HTTPError: An HTTP Error 404 is raised if url is not found
   """
 
   data_frames = pandas.read_html(url, index_col=0, parse_dates=True)
