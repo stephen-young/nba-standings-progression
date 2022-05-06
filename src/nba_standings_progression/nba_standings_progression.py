@@ -1,5 +1,5 @@
 import pandas
-import numpy as np
+import numpy
 import matplotlib.pyplot as plt
 from enum import Enum, auto
 from pathlib import Path
@@ -77,7 +77,7 @@ def get_standings_data_from_web(url):
   months = pandas.date_range(start_date, end_date, freq='MS')
   months = months.strftime('%B')
 
-  standings_data = standings_data[np.logical_not(standings_data.index.isin(months))]
+  standings_data = standings_data[numpy.logical_not(standings_data.index.isin(months))]
   standings_data.columns = range(1, standings_data.shape[1]+1)
 
   return standings_data
