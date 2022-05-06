@@ -1,6 +1,5 @@
 """standings_progression_test.py is a python script used for testing module functions"""
 import nba_standings_progression.nba_standings_progression as sp
-import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
 
