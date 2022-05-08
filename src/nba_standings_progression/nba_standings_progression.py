@@ -62,7 +62,7 @@ def get_standings_data_from_web(url):
   """Load standings by date data from Basketball Reference into a DataFrame from webpage
 
   Args:
-    url (str): The year of the end of the NBA regular season
+    url (str): url to a standings-by-date basketball reference page
 
   Returns:
     DataFrame: Standings by date data
@@ -71,31 +71,46 @@ def get_standings_data_from_web(url):
     HTTPError: An HTTP Error 404 is raised if url is not found
   """
 
+  # Scrape standings-by-date data
   data_frames = pandas.read_html(url, index_col=0, parse_dates=True)
+
+  # Page should only have one table so first entry is extracted
   standings_data = data_frames[0]
+
+  # Dataframe comes in with the first month of the season included in a
+  # multilevel column and the intervening months as rows
   standings_data.columns = standings_data.columns.droplevel(0)
+
+  # Remove N/A entries
   standings_data = standings_data[standings_data.index.notna()]
 
+  # Determine intervening months in the data set
   start_date = standings_data.index[0]
   end_date = standings_data.index[-1]
   months = pandas.date_range(start_date, end_date, freq='MS')
   months = months.strftime('%B')
 
+  # Remove rows that are just month names
   standings_data = standings_data[numpy.logical_not(standings_data.index.isin(months))]
+  # Set columns to rank number
   standings_data.columns = range(1, standings_data.shape[1]+1)
 
   return standings_data
 
-def get_standings_data_from_spreadsheet(filename):
+def get_standings_data_from_spreadsheet(filepath):
   """Load standings by date data from Basketball Reference into a DataFrame
-  :param filename: Path to the spreadsheet file
-  :type filename: str, path object or file-like object
-  :return: Standings by date data
-  :rtype: pandas.DataFrame
-  .. seealso:: pandas.read_excel
+
+  Args:
+    filepath (str): path to standings-by-date data spreadsheet
+
+  Returns:
+    DataFrame: Standings by date data
+
+  Raises:
+    FileNotFoundError: Raised if spreadsheet is not found
   """
 
-  standings_data = pandas.read_excel(filename, header=None, index_col=0, \
+  standings_data = pandas.read_excel(filepath, header=None, index_col=0, \
     parse_dates=True)
   standings_data.index.name = None
 
@@ -103,11 +118,12 @@ def get_standings_data_from_spreadsheet(filename):
 
 def process_standings_data(standings_data):
   """Process standings data to get win fraction of teams in group by date
-  :param standings_data: Table with the date and record of teams in grouping
-  :type standings_data: pandas.DataFrame
 
-  :return: Win fraction by date for each team in group
-  :rtype: pandas.DataFrame
+  Args:
+    standings_data (DataFrame): standings-by-date data from basketball reference
+
+  Returns:
+    DataFrame: Win fraction by date for each team in group
   """
 
   standings_data = standings_data.stack()
@@ -134,11 +150,11 @@ def process_standings_data(standings_data):
 def plot_standings_progression(data):
   """Produce a plot of the standings progression
 
-  :param data: Win fraction by date data for each team in group
-  :type data: pandas.DataFrame
+  Args:
+    data (DataFrame): Win fraction by date data for each team in group
 
-  :return: Figure of standings progression plot
-  :rtype: matplotlib.figure.Figure
+  Returns:
+    Figure: Figure of standings progression plot
   """
 
   team_list = list(data.columns)
