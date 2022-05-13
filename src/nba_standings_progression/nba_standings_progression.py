@@ -8,12 +8,6 @@ pandas.plotting.register_matplotlib_converters()
 class Group(Enum):
     EAST = auto()
     WEST = auto()
-    ATLANTIC = auto()
-    CENTRAL = auto()
-    SOUTHEAST = auto()
-    NORTHWEST = auto()
-    PACIFIC = auto()
-    SOUTHWEST = auto()
 
 def standings_progression(season_year: int, group:Group):
 
@@ -21,12 +15,6 @@ def standings_progression(season_year: int, group:Group):
   GROUP_URL = {
       Group.EAST:      'eastern_conference',
       Group.WEST:      'western_conference',
-      Group.ATLANTIC:  'atlantic_division',
-      Group.CENTRAL:   'central_division',
-      Group.SOUTHEAST: 'southeast_division',
-      Group.NORTHWEST: 'northwest_division',
-      Group.PACIFIC:   'pacific_division',
-      Group.SOUTHWEST: 'southwest_division',
   }
 
   url = f"www.basketball-reference.com/leagues/NBA_{season_year}_standings_by_date_{GROUP_URL[group]}.html"
