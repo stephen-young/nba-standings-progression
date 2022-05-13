@@ -114,7 +114,10 @@ def process_standings_data(standings_data):
     DataFrame: Win fraction by date for each team in group
   """
 
+  STANDINGS_PATTERN = r'(?P<team>[A-Z]{3})\s\((?P<win>\d+)\-(?P<loss>\d+)\)'
+
   standings_data = standings_data.stack()
+  standings_data.index = standings_data.index.rename(('date','rank'))
 
   standings_data = standings_data.str.extract(STANDINGS_PATTERN)
 
@@ -122,38 +125,35 @@ def process_standings_data(standings_data):
   standings_data['loss'] = pandas.to_numeric(standings_data['loss'])
   standings_data['GP'] = standings_data['win'] + standings_data['loss']
   standings_data['PCT'] = standings_data['win'] / standings_data['GP']
-  standings_data['rank'] = standings_data.index.levels[1][standings_data.index.codes[1]]
-  standings_data.index = standings_data.index.droplevel(1)
+  standings_data = standings_data.reset_index(level='rank')
+  standings_data = standings_data.drop_duplicates(subset=['team','GP'])
 
-  end_date = standings_data.index[-1]
-  team_list = list(standings_data.loc[end_date,'team'])
+  return standings_data
 
-  win_frac_data = [standings_data[standings_data['team'] == team]['PCT'] \
-    for team in team_list]
-
-  win_frac_df = pandas.concat(win_frac_data,axis=1,keys=team_list)
-
-  return win_frac_df
-
-def plot_standings_progression(data):
+def plot_standings_progression(standings_data, max_rank=15, dash_rank=15):
   """Produce a plot of the standings progression
 
   Args:
     data (DataFrame): Win fraction by date data for each team in group
+    max_rank (int): rank in final standings cutoff for inclusion in plot
+    dash_rank (int): rank in final standings cutoff to plot with solid line
 
   Returns:
     Figure: Figure of standings progression plot
   """
 
-  team_list = list(data.columns)
-  start_date = data.index[0]
-  end_date = data.index[-1]
-  dates = data.index.to_pydatetime()
+  standings_data = standings_data.reset_index()
 
+  final_standings = standings_data[standings_data['GP'] == standings_data['GP'].max()]
+  final_standings = final_standings.sort_values(by='rank')
+  final_standings = final_standings.set_index('team')
+  team_list = final_standings[final_standings['rank'] <= max_rank]['team']
+
+  start_date = standings_data.index[0]
+  end_date = standings_data.index[-1]
   date_ticks = pandas.date_range(start_date, end_date, freq=pandas.DateOffset(months=1))
 
   fig, axes = plt.subplots(figsize=PLOT['Figure']['Size'])
-  axes.plot(dates, data.values, linewidth=PLOT['Line']['Width'])
 
   # format y-axis
   axes.set_ylabel('Win fraction (wins / games played to-date)')
@@ -168,34 +168,31 @@ def plot_standings_progression(data):
   # apply gird
   axes.grid()
 
-  line_array = axes.get_lines()
-
-  num_team = len(team_list)
-
-  # Set line properties
-  for i in range(num_team):
-    line = line_array[i]
-    team = team_list[i]
+  for team in team_list:
     colours = TEAM_COLOURS[team]
+    team_data = standings_data[standings_data['team'] == team]
+    style = '-'
 
-    line.set_label(team)
-    line.set_color(colours['line'])
-    line.set_marker(PLOT['Marker']['Symbol'])
-    line.set_markerfacecolor(colours['marker'])
-    line.set_markeredgecolor(colours['edge'])
-    line.set_markeredgewidth(PLOT['Marker']['EdgeWidth'])
-    line.set_markersize(PLOT['Marker']['Size'])
+    if final_standings.loc[team, 'rank'] > dash_rank:
+      style = ':'
 
-    # Set the line style of non-playoff teams to dotted
-    if i >= 8:
-      line.set_linestyle(':')
+    axes.plot('date',
+              'PCT',
+              data=team_data,
+              label=team,
+              color=colours['line'],
+              linewidth=PLOT['Line']['Width'],
+              linestyle=style,
+              marker=PLOT['Marker']['Symbol'],
+              markeredgecolor=colours['edge'],
+              markerfacecolor=colours['marker'],
+              markeredgewidth=PLOT['Marker']['EdgeWidth'],
+              markersize=PLOT['Marker']['Size'])
 
   axes.legend(ncol=PLOT['Legend']['NumCol'])
   fig.set_tight_layout(PLOT['Figure']['TightLayout'])
 
   return fig
-
-STANDINGS_PATTERN = r'(?P<team>[A-Z]{3})\s\((?P<win>\d+)\-(?P<loss>\d+)\)'
 
 #Team colours selected from https://teamcolorcodes.com/nba-team-color-codes/
 TEAM_COLOURS = {
