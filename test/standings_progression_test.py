@@ -1,6 +1,7 @@
 """standings_progression_test.py is a python script used for testing module functions"""
 import nba_standings_progression.nba_standings_progression as sp
 import pandas as pd
+import matplotlib.pyplot as plt
 import pytest
 import numpy
 
@@ -34,3 +35,40 @@ def test_processed_standings_data_result(processed_data):
     assert all(final_standings['win'] == [60, 58, 51, 49, 48, 42, 42, 41, 39, 39, 32, 29, 22, 19, 17])
     assert all(final_standings['loss'] == [22, 24, 31, 33, 34, 40, 40, 41, 43, 43, 50, 53, 60, 63, 65])
     assert numpy.allclose(final_standings['PCT'] , [0.732, 0.707, 0.622, 0.598, 0.585, 0.512, 0.512, 0.500, 0.476, 0.476, 0.390, 0.354, 0.268, 0.232, 0.207], rtol=1e-2)
+
+def test_plot_standings_progression_return_type(processed_data):
+    standings_plot = sp.plot_standings_progression(processed_data)
+    assert type(standings_plot) is plt.Figure
+
+def test_plot_standings_progression_defaults(processed_data):
+    standings_plot = sp.plot_standings_progression(processed_data)
+    axes = standings_plot.get_axes()
+    axes = axes[0]
+    lines = axes.get_lines()
+    line_labels = [line.get_label() for line in lines]
+    line_styles = [line.get_linestyle() for line in lines]
+    assert len(lines) == 15
+    assert line_labels == ['MIL', 'TOR', 'PHI', 'BOS', 'IND', 'BRK', 'ORL', 'DET', 'CHO', 'MIA', 'WAS', 'ATL', 'CHI', 'CLE', 'NYK']
+    assert line_styles == ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
+
+def test_plot_standings_progression_dashed(processed_data):
+    standings_plot = sp.plot_standings_progression(processed_data, dash_rank = 8)
+    axes = standings_plot.get_axes()
+    axes = axes[0]
+    lines = axes.get_lines()
+    line_labels = [line.get_label() for line in lines]
+    line_styles = [line.get_linestyle() for line in lines]
+    assert len(lines) == 15
+    assert line_labels == ['MIL', 'TOR', 'PHI', 'BOS', 'IND', 'BRK', 'ORL', 'DET', 'CHO', 'MIA', 'WAS', 'ATL', 'CHI', 'CLE', 'NYK']
+    assert line_styles == ['-', '-', '-', '-', '-', '-', '-', '-', ':', ':', ':', ':', ':', ':', ':']
+
+def test_plot_standings_progression_exclusion(processed_data):
+    standings_plot = sp.plot_standings_progression(processed_data, max_rank = 8)
+    axes = standings_plot.get_axes()
+    axes = axes[0]
+    lines = axes.get_lines()
+    line_labels = [line.get_label() for line in lines]
+    line_styles = [line.get_linestyle() for line in lines]
+    assert len(lines) == 8
+    assert line_labels == ['MIL', 'TOR', 'PHI', 'BOS', 'IND', 'BRK', 'ORL', 'DET']
+    assert line_styles == ['-', '-', '-', '-', '-', '-', '-', '-']
