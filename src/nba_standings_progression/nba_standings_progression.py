@@ -9,7 +9,12 @@ class Group(Enum):
     EAST = auto()
     WEST = auto()
 
-def standings_progression(season_year: int, group:Group):
+class Inclusion(Enum):
+    ALL = auto()
+    DASHEDALL = auto()
+    PLAYOFFS = auto()
+
+def standings_progression(season_year: int, group:Group, inclusion:Inclusion):
 
   # Group component of basketball-reference's standings by date url
   GROUP_URL = {
@@ -147,7 +152,7 @@ def plot_standings_progression(standings_data, max_rank=15, dash_rank=15):
   final_standings = standings_data[standings_data['GP'] == standings_data['GP'].max()]
   final_standings = final_standings.sort_values(by='rank')
   final_standings = final_standings.set_index('team')
-  team_list = final_standings[final_standings['rank'] <= max_rank]['team']
+  team_list = final_standings[final_standings['rank'] <= max_rank].index
 
   start_date = standings_data.index[0]
   end_date = standings_data.index[-1]
@@ -237,7 +242,7 @@ TEAM_COLOURS = {
 
 PLOT = {
     'Figure': {
-        'Size': [19.2, 10.8],
+        'Size': [14.4, 10.8],
         'TightLayout': True
     },
     'Axes': {
