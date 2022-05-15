@@ -40,35 +40,34 @@ def test_plot_standings_progression_return_type(processed_data):
     standings_plot = sp.plot_standings_progression(processed_data)
     assert type(standings_plot) is plt.Figure
 
-def test_plot_standings_progression_defaults(processed_data):
-    standings_plot = sp.plot_standings_progression(processed_data)
-    axes = standings_plot.get_axes()
+def standings_plot_check(plot, line_count_exp, line_label_exp, line_style_exp):
+    axes = plot.get_axes()
     axes = axes[0]
     lines = axes.get_lines()
     line_labels = [line.get_label() for line in lines]
     line_styles = [line.get_linestyle() for line in lines]
-    assert len(lines) == 15
-    assert line_labels == ['MIL', 'TOR', 'PHI', 'BOS', 'IND', 'BRK', 'ORL', 'DET', 'CHO', 'MIA', 'WAS', 'ATL', 'CHI', 'CLE', 'NYK']
-    assert line_styles == ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
+    assert len(lines) == line_count_exp
+    assert line_labels == line_label_exp
+    assert line_styles == line_style_exp
+
+def test_plot_standings_progression_defaults(processed_data):
+    standings_plot = sp.plot_standings_progression(processed_data)
+    exp_line_count = 15
+    exp_line_labels = ['MIL', 'TOR', 'PHI', 'BOS', 'IND', 'BRK', 'ORL', 'DET', 'CHO', 'MIA', 'WAS', 'ATL', 'CHI', 'CLE', 'NYK']
+    exp_line_styles = ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
+    standings_plot_check(standings_plot, exp_line_count, exp_line_labels, exp_line_styles)
 
 def test_plot_standings_progression_dashed(processed_data):
     standings_plot = sp.plot_standings_progression(processed_data, dash_rank = 8)
-    axes = standings_plot.get_axes()
-    axes = axes[0]
-    lines = axes.get_lines()
-    line_labels = [line.get_label() for line in lines]
-    line_styles = [line.get_linestyle() for line in lines]
-    assert len(lines) == 15
-    assert line_labels == ['MIL', 'TOR', 'PHI', 'BOS', 'IND', 'BRK', 'ORL', 'DET', 'CHO', 'MIA', 'WAS', 'ATL', 'CHI', 'CLE', 'NYK']
-    assert line_styles == ['-', '-', '-', '-', '-', '-', '-', '-', ':', ':', ':', ':', ':', ':', ':']
+    exp_line_count = 15
+    exp_line_labels = ['MIL', 'TOR', 'PHI', 'BOS', 'IND', 'BRK', 'ORL', 'DET', 'CHO', 'MIA', 'WAS', 'ATL', 'CHI', 'CLE', 'NYK']
+    exp_line_styles = ['-', '-', '-', '-', '-', '-', '-', '-', ':', ':', ':', ':', ':', ':', ':']
+    standings_plot_check(standings_plot, exp_line_count, exp_line_labels, exp_line_styles)
 
 def test_plot_standings_progression_exclusion(processed_data):
     standings_plot = sp.plot_standings_progression(processed_data, max_rank = 8)
-    axes = standings_plot.get_axes()
-    axes = axes[0]
-    lines = axes.get_lines()
-    line_labels = [line.get_label() for line in lines]
-    line_styles = [line.get_linestyle() for line in lines]
-    assert len(lines) == 8
-    assert line_labels == ['MIL', 'TOR', 'PHI', 'BOS', 'IND', 'BRK', 'ORL', 'DET']
-    assert line_styles == ['-', '-', '-', '-', '-', '-', '-', '-']
+    exp_line_count = 8
+    exp_line_labels = ['MIL', 'TOR', 'PHI', 'BOS', 'IND', 'BRK', 'ORL', 'DET']
+    exp_line_styles = ['-', '-', '-', '-', '-', '-', '-', '-']
+    standings_plot_check(standings_plot, exp_line_count, exp_line_labels, exp_line_styles)
+
