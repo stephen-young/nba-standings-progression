@@ -26,7 +26,6 @@ def standings_progression(season_year: int, group:Group, include:Inclusion) -> p
     Figure: Figure of standings progression plot
   """
 
-
   # Group component of basketball-reference's standings by date url
   GROUP_URL = {
       Group.EAST:      'eastern_conference',
@@ -49,27 +48,6 @@ def standings_progression(season_year: int, group:Group, include:Inclusion) -> p
   progression_plot = plot_standings_progression(standings_data,rank_cutoff['max'], rank_cutoff['dash'])
 
   return progression_plot
-
-def generate_standings_progression_plots(data_dir: Path, output_dir: Path) -> None:
-
-  DATA_FILE_PATTERN = '*.xlsx'
-  IMG_FORMAT = '.png'
-
-  data_files = sorted(data_dir.glob(DATA_FILE_PATTERN))
-
-  for file in data_files:
-
-    try:
-      ws_data = get_standings_data_from_spreadsheet(str(file))
-    except:
-      print("Something went wrong with " + str(file))
-      continue
-
-    win_frac_data = process_standings_data(ws_data)
-    fig = plot_standings_progression(win_frac_data)
-    out_file = output_dir / file.with_suffix(IMG_FORMAT).name
-    fig.savefig(str(out_file), format=IMG_FORMAT[1:])
-
 
 def get_standings_data_from_web(url):
   """Load standings by date data from Basketball Reference into a DataFrame from webpage
@@ -107,25 +85,6 @@ def get_standings_data_from_web(url):
   standings_data = standings_data[numpy.logical_not(standings_data.index.isin(months))]
   # Set columns to rank number
   standings_data.columns = range(1, standings_data.shape[1]+1)
-
-  return standings_data
-
-def get_standings_data_from_spreadsheet(filepath):
-  """Load standings by date data from Basketball Reference into a DataFrame
-
-  Args:
-    filepath (str): path to standings-by-date data spreadsheet
-
-  Returns:
-    DataFrame: Standings by date data
-
-  Raises:
-    FileNotFoundError: Raised if spreadsheet is not found
-  """
-
-  standings_data = pandas.read_excel(filepath, header=None, index_col=0, \
-    parse_dates=True)
-  standings_data.index.name = None
 
   return standings_data
 
