@@ -14,19 +14,39 @@ class Inclusion(Enum):
     DASHEDALL = auto()
     PLAYOFFS = auto()
 
-def standings_progression(season_year: int, group:Group, inclusion:Inclusion):
+def standings_progression(season_year: int, group:Group, include:Inclusion) -> plt.Figure:
+  """Load standings by date data from Basketball Reference into a DataFrame from webpage
+
+  Args:
+    season_year (int): end year of the NBA season
+    group (Group): team grouping to plot standings progression
+    include (Inclusion): team inclusion in plot
+
+  Returns:
+    Figure: Figure of standings progression plot
+  """
+
 
   # Group component of basketball-reference's standings by date url
   GROUP_URL = {
       Group.EAST:      'eastern_conference',
-      Group.WEST:      'western_conference',
+      Group.WEST:      'western_conference'
   }
 
-  url = f"www.basketball-reference.com/leagues/NBA_{season_year}_standings_by_date_{GROUP_URL[group]}.html"
+  PLOT_INCLUSION = {
+    Inclusion.ALL: {'max': 15, 'dash':15},
+    Inclusion.DASHEDALL: {'max': 15, 'dash':8},
+    Inclusion.PLAYOFFS: {'max': 8, 'dash':8}
+  }
+
+  BASE_URL = "https://www.basketball-reference.com"
+
+  url = f"{BASE_URL}/leagues/NBA_{season_year}_standings_by_date_{GROUP_URL[group]}.html"
+  rank_cutoff = PLOT_INCLUSION[include]
 
   standings_data = get_standings_data_from_web(url)
   standings_data = process_standings_data(standings_data)
-  progression_plot = plot_standings_progression(standings_data)
+  progression_plot = plot_standings_progression(standings_data,rank_cutoff['max'], rank_cutoff['dash'])
 
   return progression_plot
 
