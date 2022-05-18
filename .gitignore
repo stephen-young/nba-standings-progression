@@ -126,5 +126,6 @@ venv.bak/
 dmypy.json
 
 # repo specific
+notebooks/
 standings_data/
 plots/
