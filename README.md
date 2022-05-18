@@ -1,11 +1,9 @@
 # NBA Standings Progression
 
-Generate plots of the standings progression in the conferences and divisions in the NBA.
+Visualize the progression of season standings in the conferences of the NBA.
 
-## How to use
-
-1. Get the standings by date data in spreadsheet form from [basketball reference](https://www.basketball-reference.com/)
-2. Save the spreadsheet in the `standings_data` directory
-3. Run `generate_plots.py` as a script. Plots will populate as `.png` files in the `plots` directory
-4. ????
-5. Profit
+```python
+>>> import nba_standings_progression.nba_standings_progression  as sp
+>>> plot = sp.standings_progression(2019, sp.Group.EAST, sp.Inclusion.ALL)
+>>> plot.show()
+```
