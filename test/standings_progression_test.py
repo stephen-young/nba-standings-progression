@@ -71,3 +71,44 @@ def test_plot_standings_progression_exclusion(processed_data):
     exp_line_styles = ['-', '-', '-', '-', '-', '-', '-', '-']
     standings_plot_check(standings_plot, exp_line_count, exp_line_labels, exp_line_styles)
 
+def test_standings_progression_east_all():
+    standings_plot = sp.standings_progression(2019, sp.Group.EAST, sp.Inclusion.ALL)
+    exp_line_count = 15
+    exp_line_labels = ['MIL', 'TOR', 'PHI', 'BOS', 'IND', 'BRK', 'ORL', 'DET', 'CHO', 'MIA', 'WAS', 'ATL', 'CHI', 'CLE', 'NYK']
+    exp_line_styles = ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
+    standings_plot_check(standings_plot, exp_line_count, exp_line_labels, exp_line_styles)
+
+def test_standings_progression_east_dashedall():
+    standings_plot = sp.standings_progression(2019, sp.Group.EAST, sp.Inclusion.DASHEDALL)
+    exp_line_count = 15
+    exp_line_labels = ['MIL', 'TOR', 'PHI', 'BOS', 'IND', 'BRK', 'ORL', 'DET', 'CHO', 'MIA', 'WAS', 'ATL', 'CHI', 'CLE', 'NYK']
+    exp_line_styles = ['-', '-', '-', '-', '-', '-', '-', '-', ':', ':', ':', ':', ':', ':', ':']
+    standings_plot_check(standings_plot, exp_line_count, exp_line_labels, exp_line_styles)
+
+def test_standings_progression_east_playoffs():
+    standings_plot = sp.standings_progression(2019, sp.Group.EAST, sp.Inclusion.PLAYOFFS)
+    exp_line_count = 8
+    exp_line_labels = ['MIL', 'TOR', 'PHI', 'BOS', 'IND', 'BRK', 'ORL', 'DET']
+    exp_line_styles = ['-', '-', '-', '-', '-', '-', '-', '-']
+    standings_plot_check(standings_plot, exp_line_count, exp_line_labels, exp_line_styles)
+
+def test_standings_progression_west_all():
+    standings_plot = sp.standings_progression(2019, sp.Group.WEST, sp.Inclusion.ALL)
+    exp_line_count = 15
+    exp_line_labels = ['GSW', 'DEN', 'HOU', 'POR', 'UTA', 'OKC', 'LAC', 'SAS', 'SAC', 'LAL', 'MIN', 'DAL', 'MEM', 'NOP', 'PHO']
+    exp_line_styles = ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
+    standings_plot_check(standings_plot, exp_line_count, exp_line_labels, exp_line_styles)
+
+def test_standings_progression_west_dashedall():
+    standings_plot = sp.standings_progression(2019, sp.Group.WEST, sp.Inclusion.DASHEDALL)
+    exp_line_count = 15
+    exp_line_labels = ['GSW', 'DEN', 'HOU', 'POR', 'UTA', 'OKC', 'LAC', 'SAS', 'SAC', 'LAL', 'MIN', 'DAL', 'MEM', 'NOP', 'PHO']
+    exp_line_styles = ['-', '-', '-', '-', '-', '-', '-', '-', ':', ':', ':', ':', ':', ':', ':']
+    standings_plot_check(standings_plot, exp_line_count, exp_line_labels, exp_line_styles)
+
+def test_standings_progression_west_playoffs():
+    standings_plot = sp.standings_progression(2019, sp.Group.WEST, sp.Inclusion.PLAYOFFS)
+    exp_line_count = 8
+    exp_line_labels = ['GSW', 'DEN', 'HOU', 'POR', 'UTA', 'OKC', 'LAC', 'SAS']
+    exp_line_styles = ['-', '-', '-', '-', '-', '-', '-', '-']
+    standings_plot_check(standings_plot, exp_line_count, exp_line_labels, exp_line_styles)
