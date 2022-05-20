@@ -1,8 +1,8 @@
 import pandas
 import numpy
 import matplotlib.pyplot as plt
+import matplotlib.dates as matdates
 from enum import Enum, auto
-from pathlib import Path
 pandas.plotting.register_matplotlib_converters()
 
 class Group(Enum):
@@ -85,6 +85,7 @@ def get_standings_data_from_web(url):
   standings_data = standings_data[numpy.logical_not(standings_data.index.isin(months))]
   # Set columns to rank number
   standings_data.columns = range(1, standings_data.shape[1]+1)
+  standings_data.index = pandas.to_datetime(standings_data.index)
 
   return standings_data
 
@@ -133,8 +134,8 @@ def plot_standings_progression(standings_data, max_rank=15, dash_rank=15):
   final_standings = final_standings.set_index('team')
   team_list = final_standings[final_standings['rank'] <= max_rank].index
 
-  start_date = standings_data.index[0]
-  end_date = standings_data.index[-1]
+  start_date = standings_data['date'].min()
+  end_date = standings_data['date'].max()
   date_ticks = pandas.date_range(start_date, end_date, freq=pandas.DateOffset(months=1))
 
   fig, axes = plt.subplots(figsize=PLOT['Figure']['Size'])
@@ -148,6 +149,7 @@ def plot_standings_progression(standings_data, max_rank=15, dash_rank=15):
   axes.set_xlabel('Date')
   axes.set_xlim(start_date, end_date)
   axes.set_xticks(date_ticks)
+  axes.xaxis.set_major_formatter(matdates.DateFormatter('%Y-%m-%d'))
 
   # apply gird
   axes.grid()
@@ -221,7 +223,7 @@ TEAM_COLOURS = {
 
 PLOT = {
     'Figure': {
-        'Size': [14.4, 10.8],
+        'Size': [14.4, 8.1],
         'TightLayout': True
     },
     'Axes': {
