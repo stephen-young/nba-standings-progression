@@ -68,7 +68,7 @@ def get_standings_data_from_web(url):
   # Page should only have one table so first entry is extracted
   standings_data = data_frames[0]
 
-  # Dataframe comes in with the first month of the season included in a
+  # DataFrame comes in with the first month of the season included in a
   # multilevel column and the intervening months as rows
   standings_data.columns = standings_data.columns.droplevel(0)
 
@@ -120,8 +120,8 @@ def plot_standings_progression(standings_data, max_rank=15, dash_rank=15):
 
   Args:
     data (DataFrame): Win fraction by date data for each team in group
-    max_rank (int): rank in final standings cutoff for inclusion in plot
-    dash_rank (int): rank in final standings cutoff to plot with solid line
+    max_rank (int): rank in final standings cut-off for inclusion in plot
+    dash_rank (int): rank in final standings cut-off to plot with solid line
 
   Returns:
     Figure: Figure of standings progression plot
