@@ -1,6 +1,88 @@
 [build-system]
-requires = [
-    "setuptools>=42",
-    "wheel"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "nba-standings-progression"
+dynamic = ["version"]
+description = "Visualize the progression of the NBA regular season standings"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [
+    { name = "Stephen Young", email = "stephen.m.young@protonmail.com" },
 ]
-build-backend = "setuptools.build_meta"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+    "beautifulsoup4",
+    "html5lib",
+    "lxml",
+    "matplotlib",
+    "pandas",
+]
+
+[project.urls]
+Documentation = "https://github.com/stephen-young/nba-standings-progression#readme"
+Issues = "https://github.com/stephen-young/nba-standings-progression/issues"
+Source = "https://github.com/stephen-young/nba-standings-progression"
+
+[tool.hatch.version]
+path = "src/nba_standings_progression/__about__.py"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "coverage[toml]>=6.5",
+  "pytest",
+]
+
+[tool.hatch.envs.default.scripts]
+test = "pytest {args:tests}"
+test-cov = "coverage run -m pytest {args:tests}"
+cov-report = [
+  "- coverage combine",
+  "coverage report",
+]
+cov = [
+  "test-cov",
+  "cov-report",
+]
+
+[[tool.hatch.envs.all.matrix]]
+python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+[tool.hatch.envs.types]
+dependencies = [
+  "mypy>=1.0.0",
+]
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:nba_standings_progression tests}"
+
+[tool.coverage.run]
+source_pkgs = ["nba_standings_progression", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/nba_standings_progression/__about__.py",
+]
+
+[tool.coverage.paths]
+nba_standings_progression = ["src/nba_standings_progression", "*/nba-standings-progression/src/nba_standings_progression"]
+tests = ["tests", "*/nba-standings-progression/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
