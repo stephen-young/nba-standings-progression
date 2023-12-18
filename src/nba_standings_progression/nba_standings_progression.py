@@ -19,7 +19,7 @@ class Inclusion(Enum):
 
 
 def standings_progression(
-    season_year: int, group: Group, include: Inclusion
+    year: int, group: Group, include: Inclusion
 ) -> plt.Figure:
     """Create standings progression plot
 
@@ -27,7 +27,7 @@ def standings_progression(
     season using standings by date data on Basketball Reference
 
     Args:
-      season_year (int): end year of the NBA season
+      year (int): end year of the NBA season
       group (Group): team grouping to plot standings progression
       include (Inclusion): team inclusion in plot
 
@@ -35,18 +35,13 @@ def standings_progression(
       Figure: Figure of standings progression plot
     """
 
-    # Group component of basketball-reference's standings by date url
-    GROUP_URL = {Group.EAST: "eastern_conference", Group.WEST: "western_conference"}
-
     PLOT_INCLUSION = {
         Inclusion.ALL: {"max": 15, "dash": 15},
         Inclusion.DASHEDALL: {"max": 15, "dash": 8},
         Inclusion.PLAYOFFS: {"max": 8, "dash": 8},
     }
 
-    BASE_URL = "https://www.basketball-reference.com"
-
-    url = f"{BASE_URL}/leagues/NBA_{season_year}_standings_by_date_{GROUP_URL[group]}.html"
+    url = get_standings_data_url(year, group)
 
     rank_cutoff = PLOT_INCLUSION[include]
 
@@ -57,6 +52,24 @@ def standings_progression(
     )
 
     return progression_plot
+
+
+def get_standings_data_url(year: int, group: Group) -> str:
+    """Creates url with the standings by date data
+
+    Args:
+        year (int): end year of NBA season
+        group (Group): team grouping
+
+    Returns:
+        str: url of standings by date data
+    """
+
+    BASE_URL = "https://www.basketball-reference.com"
+    GROUP_URL = {Group.EAST: "eastern_conference", Group.WEST: "western_conference"}
+    url = f"{BASE_URL}/leagues/NBA_{year}_standings_by_date_{GROUP_URL[group]}.html"
+
+    return url
 
 
 def get_standings_data_from_web(url):
