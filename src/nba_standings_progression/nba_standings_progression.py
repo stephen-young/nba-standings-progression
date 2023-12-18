@@ -12,14 +12,8 @@ class Group(Enum):
     WEST = auto()
 
 
-class Inclusion(Enum):
-    ALL = auto()
-    DASHEDALL = auto()
-    PLAYOFFS = auto()
-
-
 def standings_progression(
-    year: int, group: Group, include: Inclusion
+    year: int, group: Group
 ) -> plt.Figure:
     """Create standings progression plot
 
@@ -35,21 +29,11 @@ def standings_progression(
       Figure: Figure of standings progression plot
     """
 
-    PLOT_INCLUSION = {
-        Inclusion.ALL: {"max": 15, "dash": 15},
-        Inclusion.DASHEDALL: {"max": 15, "dash": 8},
-        Inclusion.PLAYOFFS: {"max": 8, "dash": 8},
-    }
-
     url = get_standings_data_url(year, group)
-
-    rank_cutoff = PLOT_INCLUSION[include]
 
     standings_data = get_standings_data_from_web(url)
     standings_data = process_standings_data(standings_data)
-    progression_plot = plot_standings_progression(
-        standings_data, rank_cutoff["max"], rank_cutoff["dash"]
-    )
+    progression_plot = plot_standings_progression(standings_data)
 
     return progression_plot
 
@@ -142,7 +126,7 @@ def process_standings_data(standings_data):
     return standings_data
 
 
-def plot_standings_progression(standings_data, max_rank=15, dash_rank=15):
+def plot_standings_progression(standings_data):
     """Produce a plot of the standings progression
 
     Args:
@@ -159,7 +143,7 @@ def plot_standings_progression(standings_data, max_rank=15, dash_rank=15):
     final_standings = standings_data[standings_data["GP"] == standings_data["GP"].max()]
     final_standings = final_standings.sort_values(by="rank")
     final_standings = final_standings.set_index("team")
-    team_list = final_standings[final_standings["rank"] <= max_rank].index
+    team_list = final_standings.index
 
     start_date = standings_data["date"].min()
     end_date = standings_data["date"].max()
@@ -187,9 +171,6 @@ def plot_standings_progression(standings_data, max_rank=15, dash_rank=15):
         colours = TEAM_COLOURS[team]
         team_data = standings_data[standings_data["team"] == team]
         style = "-"
-
-        if final_standings.loc[team, "rank"] > dash_rank:
-            style = ":"
 
         axes.plot(
             "date",
