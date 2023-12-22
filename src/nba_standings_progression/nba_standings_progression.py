@@ -30,7 +30,6 @@ def standings_progression(
     """
 
     url = get_standings_data_url(year, group)
-
     standings_data = get_standings_data_from_web(url)
     standings_data = process_standings_data(standings_data)
     progression_plot = plot_standings_progression(standings_data)
