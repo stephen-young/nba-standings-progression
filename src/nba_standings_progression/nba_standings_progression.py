@@ -247,4 +247,11 @@ PLOT = {
         "EdgeWidth": 0.25,
     },
     "Legend": {"NumCol": 2},
+    # fields to be used with the rc_params configuration of matplotlib
+    "lines.linewidth": 2.0,
+    "lines.marker": ".",
+    "lines.markersize": 7.5,
+    "lines.markeredgewidth": 0.25,
+    "figure.figsize": (14.4, 8.1),
+    "figure.autolayout.use": True,
 }
