@@ -1,6 +1,7 @@
 import pandas
 import numpy
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 import matplotlib.dates as matdates
 from enum import Enum, auto
 
@@ -12,9 +13,25 @@ class Group(Enum):
     WEST = auto()
 
 
+PLOT = {
+    "Figure": {"Size": (14.4, 8.1), "Layout": "tight"},
+    "Axes": {
+        "YMin": 0.0,
+        "YMax": 1.0,
+        "YTick": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+    },
+    "Line": {"Width": 2.0},
+    "Marker": {
+        "Symbol": ".",
+        "Size": 7.5,
+        "EdgeWidth": 0.25,
+    },
+    "Legend": {"NumCol": 2},
+}
+
 def standings_progression(
     year: int, group: Group
-) -> plt.Figure:
+) -> Figure:
     """Create standings progression plot
 
     Standings progression plot is created for the desired group in the chosen
@@ -56,7 +73,7 @@ def get_standings_data_url(year: int, group: Group) -> str:
     return url
 
 
-def get_standings_data_from_web(url):
+def get_standings_data_from_web(url: str) -> pandas.DataFrame:
     """Create standings by date DataFrame
 
     Args:
@@ -85,21 +102,25 @@ def get_standings_data_from_web(url):
     # Determine intervening months in the data set
     start_date = standings_data.index[0]
     end_date = standings_data.index[-1]
-    months = pandas.date_range(start_date, end_date, freq="MS")
-    months = months.strftime("%B")
+    months = pandas.date_range(start_date, end_date, freq="MS").strftime("%B")
 
     # Remove rows that are just month names
     standings_data = standings_data[
         numpy.logical_not(standings_data.index.isin(months))
     ]
+
     # Set columns to rank number
+
+    # FIXME rename columns with the rename method or similar
     standings_data.columns = range(1, standings_data.shape[1] + 1)
+
+    # FIXME index types with conversion method
     standings_data.index = pandas.to_datetime(standings_data.index)
 
     return standings_data
 
 
-def process_standings_data(standings_data):
+def process_standings_data(standings_data: pandas.DataFrame) -> pandas.DataFrame:
     """Process standings data to get win fraction of teams in group by date
 
     Args:
@@ -111,10 +132,11 @@ def process_standings_data(standings_data):
 
     STANDINGS_PATTERN = r"(?P<team>[A-Z]{3})\s\((?P<win>\d+)\-(?P<loss>\d+)\)"
 
-    standings_data = standings_data.stack()
-    standings_data.index = standings_data.index.rename(("date", "rank"))
+    data_series = standings_data.stack()
+    data_series.set_index(("date", "rank"), inplace=True)
+    #data_series.index = data_series.index.rename(("date", "rank"))
 
-    standings_data = standings_data.str.extract(STANDINGS_PATTERN)
+    standings_data = data_series.str.extract(STANDINGS_PATTERN)
 
     standings_data["win"] = pandas.to_numeric(standings_data["win"])
     standings_data["loss"] = pandas.to_numeric(standings_data["loss"])
@@ -126,7 +148,7 @@ def process_standings_data(standings_data):
     return standings_data
 
 
-def plot_standings_progression(standings_data):
+def plot_standings_progression(standings_data: pandas.DataFrame) -> Figure:
     """Produce a plot of the standings progression
 
     Args:
@@ -141,7 +163,7 @@ def plot_standings_progression(standings_data):
     standings_data = standings_data.reset_index()
 
     final_standings = standings_data[standings_data["GP"] == standings_data["GP"].max()]
-    final_standings = final_standings.sort_values(by="rank")
+    final_standings = final_standings.sort_values(by=['rank'])
     final_standings = final_standings.set_index("team")
     team_list = final_standings.index
 
@@ -151,7 +173,10 @@ def plot_standings_progression(standings_data):
         start_date, end_date, freq=pandas.DateOffset(months=1)
     )
 
-    fig, axes = plt.subplots(figsize=PLOT["Figure"]["Size"])
+    fig, axes = plt.subplots(
+            figsize = PLOT["Figure"]["Size"],
+            layout = PLOT["Figure"]["Layout"]
+    )
 
     # format y-axis
     axes.set_ylabel("Win fraction (wins / games played to-date)")
@@ -188,7 +213,6 @@ def plot_standings_progression(standings_data):
         )
 
     axes.legend(ncol=PLOT["Legend"]["NumCol"])
-    fig.set_tight_layout(PLOT["Figure"]["TightLayout"])
 
     return fig
 
@@ -232,20 +256,4 @@ TEAM_COLOURS = {
     "NOK": {"line": "#C8102E", "marker": "#0C2340", "edge": "#000000"},
     "SEA": {"line": "#00653A", "marker": "#FFC200", "edge": "#000000"},
     "VAN": {"line": "#00B2A9", "marker": "#E43C40", "edge": "#000000"},
-}
-
-PLOT = {
-    "Figure": {"Size": [14.4, 8.1], "TightLayout": True},
-    "Axes": {
-        "YMin": 0.0,
-        "YMax": 1.0,
-        "YTick": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
-    },
-    "Line": {"Width": 2.0},
-    "Marker": {
-        "Symbol": ".",
-        "Size": 7.5,
-        "EdgeWidth": 0.25,
-    },
-    "Legend": {"NumCol": 2},
 }
