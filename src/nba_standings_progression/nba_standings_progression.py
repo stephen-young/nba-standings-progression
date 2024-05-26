@@ -29,9 +29,8 @@ PLOT = {
     "Legend": {"NumCol": 2},
 }
 
-def standings_progression(
-    year: int, group: Group
-) -> Figure:
+
+def standings_progression(year: int, group: Group) -> Figure:
     """Create standings progression plot
 
     Standings progression plot is created for the desired group in the chosen
@@ -105,16 +104,14 @@ def get_standings_data_from_web(url: str) -> pandas.DataFrame:
     months = pandas.date_range(start_date, end_date, freq="MS").strftime("%B")
 
     # Remove rows that are just month names
-    standings_data = standings_data[
-        numpy.logical_not(standings_data.index.isin(months))
+    standings_data = standings_data.loc[
+        numpy.logical_not(standings_data.index.isin(months)), :
     ]
 
     # Set columns to rank number
-
-    # FIXME rename columns with the rename method or similar
     standings_data.columns = range(1, standings_data.shape[1] + 1)
 
-    # FIXME index types with conversion method
+    # Convert date strings in index to datetime
     standings_data.index = pandas.to_datetime(standings_data.index)
 
     return standings_data
@@ -133,8 +130,7 @@ def process_standings_data(standings_data: pandas.DataFrame) -> pandas.DataFrame
     STANDINGS_PATTERN = r"(?P<team>[A-Z]{3})\s\((?P<win>\d+)\-(?P<loss>\d+)\)"
 
     data_series = standings_data.stack()
-    data_series.set_index(("date", "rank"), inplace=True)
-    #data_series.index = data_series.index.rename(("date", "rank"))
+    data_series.index = data_series.index.rename(("date", "rank"))
 
     standings_data = data_series.str.extract(STANDINGS_PATTERN)
 
@@ -162,8 +158,10 @@ def plot_standings_progression(standings_data: pandas.DataFrame) -> Figure:
 
     standings_data = standings_data.reset_index()
 
-    final_standings = standings_data[standings_data["GP"] == standings_data["GP"].max()]
-    final_standings = final_standings.sort_values(by=['rank'])
+    final_standings = standings_data.loc[
+        standings_data["GP"] == standings_data["GP"].max(), :
+    ]
+    final_standings = final_standings.sort_values(by="rank")
     final_standings = final_standings.set_index("team")
     team_list = final_standings.index
 
@@ -174,8 +172,7 @@ def plot_standings_progression(standings_data: pandas.DataFrame) -> Figure:
     )
 
     fig, axes = plt.subplots(
-            figsize = PLOT["Figure"]["Size"],
-            layout = PLOT["Figure"]["Layout"]
+        figsize=PLOT["Figure"]["Size"], layout=PLOT["Figure"]["Layout"]
     )
 
     # format y-axis
@@ -187,7 +184,6 @@ def plot_standings_progression(standings_data: pandas.DataFrame) -> Figure:
     axes.set_xlabel("Date")
     axes.set_xlim(start_date, end_date)
     axes.set_xticks(date_ticks)
-    axes.xaxis.set_major_formatter(matdates.DateFormatter("%Y-%m-%d"))
 
     # apply gird
     axes.grid()
