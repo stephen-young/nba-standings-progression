@@ -2,7 +2,6 @@ import pandas
 import numpy
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
-import matplotlib.dates as matdates
 from enum import Enum, auto
 
 pandas.plotting.register_matplotlib_converters()
