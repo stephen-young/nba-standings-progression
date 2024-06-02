@@ -1,7 +1,8 @@
 """standings_progression_test.py is a python script used for testing module functions"""
+
 import nba_standings_progression.nba_standings_progression as sp
 import pandas as pd
-import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 import pytest
 import numpy
 
@@ -93,7 +94,7 @@ def test_processed_standings_data_result(processed_data):
 
 def test_plot_standings_progression_return_type(processed_data):
     standings_plot = sp.plot_standings_progression(processed_data)
-    assert type(standings_plot) is plt.Figure
+    assert type(standings_plot) is Figure
 
 
 def standings_plot_check(plot, line_count_exp, line_label_exp, line_style_exp):
@@ -149,60 +150,8 @@ def test_plot_standings_progression_defaults(processed_data):
     )
 
 
-def test_plot_standings_progression_dashed(processed_data):
-    standings_plot = sp.plot_standings_progression(processed_data, dash_rank=8)
-    exp_line_count = 15
-    exp_line_labels = [
-        "MIL",
-        "TOR",
-        "PHI",
-        "BOS",
-        "IND",
-        "BRK",
-        "ORL",
-        "DET",
-        "CHO",
-        "MIA",
-        "WAS",
-        "ATL",
-        "CHI",
-        "CLE",
-        "NYK",
-    ]
-    exp_line_styles = [
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        ":",
-        ":",
-        ":",
-        ":",
-        ":",
-        ":",
-        ":",
-    ]
-    standings_plot_check(
-        standings_plot, exp_line_count, exp_line_labels, exp_line_styles
-    )
-
-
-def test_plot_standings_progression_exclusion(processed_data):
-    standings_plot = sp.plot_standings_progression(processed_data, max_rank=8)
-    exp_line_count = 8
-    exp_line_labels = ["MIL", "TOR", "PHI", "BOS", "IND", "BRK", "ORL", "DET"]
-    exp_line_styles = ["-", "-", "-", "-", "-", "-", "-", "-"]
-    standings_plot_check(
-        standings_plot, exp_line_count, exp_line_labels, exp_line_styles
-    )
-
-
-def test_standings_progression_east_all():
-    standings_plot = sp.standings_progression(2019, sp.Group.EAST, sp.Inclusion.ALL)
+def test_standings_progression_east():
+    standings_plot = sp.standings_progression(2019, sp.Group.EAST)
     exp_line_count = 15
     exp_line_labels = [
         "MIL",
@@ -243,64 +192,8 @@ def test_standings_progression_east_all():
     )
 
 
-def test_standings_progression_east_dashedall():
-    standings_plot = sp.standings_progression(
-        2019, sp.Group.EAST, sp.Inclusion.DASHEDALL
-    )
-    exp_line_count = 15
-    exp_line_labels = [
-        "MIL",
-        "TOR",
-        "PHI",
-        "BOS",
-        "IND",
-        "BRK",
-        "ORL",
-        "DET",
-        "CHO",
-        "MIA",
-        "WAS",
-        "ATL",
-        "CHI",
-        "CLE",
-        "NYK",
-    ]
-    exp_line_styles = [
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        ":",
-        ":",
-        ":",
-        ":",
-        ":",
-        ":",
-        ":",
-    ]
-    standings_plot_check(
-        standings_plot, exp_line_count, exp_line_labels, exp_line_styles
-    )
-
-
-def test_standings_progression_east_playoffs():
-    standings_plot = sp.standings_progression(
-        2019, sp.Group.EAST, sp.Inclusion.PLAYOFFS
-    )
-    exp_line_count = 8
-    exp_line_labels = ["MIL", "TOR", "PHI", "BOS", "IND", "BRK", "ORL", "DET"]
-    exp_line_styles = ["-", "-", "-", "-", "-", "-", "-", "-"]
-    standings_plot_check(
-        standings_plot, exp_line_count, exp_line_labels, exp_line_styles
-    )
-
-
-def test_standings_progression_west_all():
-    standings_plot = sp.standings_progression(2019, sp.Group.WEST, sp.Inclusion.ALL)
+def test_standings_progression_west():
+    standings_plot = sp.standings_progression(2019, sp.Group.WEST)
     exp_line_count = 15
     exp_line_labels = [
         "GSW",
@@ -336,62 +229,6 @@ def test_standings_progression_west_all():
         "-",
         "-",
     ]
-    standings_plot_check(
-        standings_plot, exp_line_count, exp_line_labels, exp_line_styles
-    )
-
-
-def test_standings_progression_west_dashedall():
-    standings_plot = sp.standings_progression(
-        2019, sp.Group.WEST, sp.Inclusion.DASHEDALL
-    )
-    exp_line_count = 15
-    exp_line_labels = [
-        "GSW",
-        "DEN",
-        "HOU",
-        "POR",
-        "UTA",
-        "OKC",
-        "LAC",
-        "SAS",
-        "SAC",
-        "LAL",
-        "MIN",
-        "DAL",
-        "MEM",
-        "NOP",
-        "PHO",
-    ]
-    exp_line_styles = [
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        ":",
-        ":",
-        ":",
-        ":",
-        ":",
-        ":",
-        ":",
-    ]
-    standings_plot_check(
-        standings_plot, exp_line_count, exp_line_labels, exp_line_styles
-    )
-
-
-def test_standings_progression_west_playoffs():
-    standings_plot = sp.standings_progression(
-        2019, sp.Group.WEST, sp.Inclusion.PLAYOFFS
-    )
-    exp_line_count = 8
-    exp_line_labels = ["GSW", "DEN", "HOU", "POR", "UTA", "OKC", "LAC", "SAS"]
-    exp_line_styles = ["-", "-", "-", "-", "-", "-", "-", "-"]
     standings_plot_check(
         standings_plot, exp_line_count, exp_line_labels, exp_line_styles
     )
